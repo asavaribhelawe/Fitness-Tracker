@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="theme-color" content="#00a0e3">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+    <header>
+        <h1>Fitness Tracker</h1>
+    </header>
+
+    <main>
+        <section id="login">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <section id="dashboard" style="display: none;">
+            <div class="welcome-text">
+                <p>Welcome to Fitness Tracker! We're thrilled to have you here on your journey to better health and fitness. 
+                    Whether you're just getting started or you're a seasoned athlete, our platform is designed to help you reach your fitness goals. 
+                    Track your workouts, monitor your calorie intake, and keep an eye on your weight—all in one convenient place. 
+                    Get ready to transform your health and achieve your fitness aspirations. Let's get started!</p>
+            </div>
+            <div class="tabs">
+                <button id="workout-tab" class="tab">Workout Tracker</button>
+                <button id="calorie-tab" class="tab">Calorie Tracker</button>
+                <button id="weight-tab" class="tab">Weight Tracker</button>
+            </div>
+            <div id="tab-content">
+                <div id="workout-content" class="tab-content">
+                    <div class="card">
+                        <h3>Workout Tracker</h3>
+                        <p>Track your workouts and monitor your progress.</p>
+                        <form id="workout-form">
+                            <label for="workout-name">Workout Name:</label>
+                            <input type="text" id="workout-name" name="workout-name" required>
+                            <label for="workout-duration">Duration (minutes):</label>
+                            <input type="number" id="workout-duration" name="workout-duration" min="1" required>
+                            <button type="submit">Add Workout</button>
+                        </form>
+                        <div id="workout-list">
+                            <!-- Workout entries will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+                <div id="calorie-content" class="tab-content">
+                    <div class="card">
+                        <h3>Calorie Tracker</h3>
+                        <p>Track your daily calorie intake and expenditure.</p>
+                        <form id="calorie-form">
+                            <label for="calorie-amount">Calories Consumed:</label>
+                            <input type="number" id="calorie-amount" name="calorie-amount" min="1" required>
+                            <button type="submit">Add Calories</button>
+                        </form>
+                        <div id="calorie-list">
+                            <!-- Calorie entries will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+                <div id="weight-content" class="tab-content">
+                    <div class="card">
+                        <h3>Weight Tracker</h3>
+                        <p>Track changes in your weight over time.</p>
+                        <form id="weight-form">
+                            <label for="weight-value">Weight (kg):</label>
+                            <input type="number" id="weight-value" name="weight-value" min="1" step="0.1" required>
+                            <button type="submit">Add Weight</button>
+                        </form>
+                        <div id="weight-list">
+                            <!-- Weight entries will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Fitness Tracker</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    });
+  }
+        // Mock login
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // For simplicity, hardcoding the username and password
+            if (username === 'user' && password === 'password') {
+                // Show the dashboard section
+                document.getElementById('dashboard').style.display = 'block';
+                // Hide the login section
+                document.getElementById('login').style.display = 'none';
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        });
+
+        // Tabs functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.id.replace('-tab', '-content');
+                const tabContent = document.getElementById(tabId);
+                if (tabContent) {
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    // Show the clicked tab content
+                    tabContent.style.display = 'block';
+                }
+            });
+        });
+
+        // Workout form submission
+        document.getElementById('workout-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const workoutName = document.getElementById('workout-name').value;
+            const workoutDuration = document.getElementById('workout-duration').value;
+
+            // Create workout entry
+            const workoutEntry = document.createElement('div');
+            workoutEntry.textContent = `${workoutName} - ${workoutDuration} minutes`;
+
+            // Append to workout list
+            document.getElementById('workout-list').appendChild(workoutEntry);
+
+            // Clear form fields
+            document.getElementById('workout-name').value = '';
+            document.getElementById('workout-duration').value = '';
+        });
+
+        // Calorie form submission
+        document.getElementById('calorie-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const calorieAmount = document.getElementById('calorie-amount').value;
+
+            // Create calorie entry
+            const calorieEntry = document.createElement('div');
+            calorieEntry.textContent = `Consumed: ${calorieAmount} calories`;
+
+            // Append to calorie list
+            document.getElementById('calorie-list').appendChild(calorieEntry);
+
+            // Clear form field
+            document.getElementById('calorie-amount').value = '';
+        });
+
+        // Weight form submission
+        document.getElementById('weight-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const weightValue = document.getElementById('weight-value').value;
+
+            // Create weight entry
+            const weightEntry = document.createElement('div');
+            weightEntry.textContent = `Weight: ${weightValue} kg`;
+
+            // Append to weight list
+            document.getElementById('weight-list').appendChild(weightEntry);
+
+            // Clear form field
+            document.getElementById('weight-value').value = '';
+        });
+    </script>
+</body>
+
+</html>
